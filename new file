@@ -1,0 +1,51 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.IO;
+using System.Text.RegularExpressions; 
+using System.Diagnostics;
+
+public static class Ext
+{
+            var watch = new System.Diagnostics.Stopwatch();            
+            watch.Start();
+            List<string> replaceWords = new List<string>();
+            var pathToListFile = @"%USERPROFILE%\Downloads\find_words.txt";
+            using (var reader = new StreamReader(pathToListFile))
+            {
+                while (!reader.EndOfStream)
+                {
+                    var line = reader.ReadLine();
+                    if (line == null) {
+                        continue;
+                    }
+                    replaceWords.Add(line);
+                }
+            }
+
+            var pathToCsvFile = @"%USERPROFILE%\Downloads\french_dictionary.csv";
+            using (var reader = new StreamReader(pathToCsvFile))
+            {
+                string outputText = string.Empty;
+                outputText = System.IO.File.ReadAllText(@"%USERPROFILE%\Downloads\t8.shakespeare.txt");
+                while (!reader.EndOfStream)
+                {
+                    var line = reader.ReadLine();
+                    if (line == null) {
+                        continue;
+                    } 
+                    var values = line.Split(',');
+                    if (replaceWords.Contains(values[0]))
+                    {
+                        outputText = Regex.Replace(outputText, values[0], values[1], RegexOptions.IgnoreCase);
+                    }
+                }
+                System.IO.File.WriteAllText(@"%USERPROFILE%\Downloads\output.txt", outputText);
+            }
+            Process currentProcess = Process.GetCurrentProcess();
+            long memoryUsed = currentProcess.PrivateMemorySize64;
+            watch.Stop();
+            Console.WriteLine($"Time to process: {watch.Elapsed}");
+            Console.WriteLine($"Memory used: {memoryUsed}");            
+}
